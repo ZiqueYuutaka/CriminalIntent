@@ -25,6 +25,8 @@ public class CrimeListFragment extends Fragment {
     //Nothing yet
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
+    private int crimeListPosition;
+    private List<Crime> mCrimes;
 
     private class CrimeHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener {
@@ -59,12 +61,16 @@ public class CrimeListFragment extends Fragment {
             //Starting new Activity
             //Intent intent = new Intent(getActivity(), CrimeActivity.class); //Implemented in Crime Activity
             Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            crimeListPosition = mCrimes.indexOf(mCrime);
+            //Changed by Zique Yuutaka for debugging
+            //Toast.makeText(getActivity(), "Clicking item at position " + crimeListPosition, Toast.LENGTH_SHORT).show();
             startActivity(intent);
         }
     }
 
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder>{
-        private List<Crime> mCrimes;
+        //moved to CrimeListFragment scope
+        //private List<Crime> mCrimes;
 
         public CrimeAdapter(List<Crime> crimes){
             mCrimes = crimes;
@@ -120,8 +126,11 @@ public class CrimeListFragment extends Fragment {
         if(mAdapter == null){
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
-        }else{
-            mAdapter.notifyDataSetChanged();
+        }else{//Notify mAdapter that a Crime has changed internally
+            //Changed by Zique Yuutaka for efficiency.  Rather than looking at the entire
+            //list, look at just the Crime being changed.
+            //mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemChanged(crimeListPosition);
         }
     }
 }
