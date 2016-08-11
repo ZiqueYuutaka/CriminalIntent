@@ -15,6 +15,7 @@ public class CrimeLab {
 
     private List<Crime> mCrimes;
 
+    //If there is no CrimeLab create one with a context
     public static CrimeLab get(Context context){
         if(sCrimeLab == null){
             sCrimeLab = new CrimeLab(context);
@@ -22,6 +23,7 @@ public class CrimeLab {
         return sCrimeLab;
     }
 
+    //Create a CrimeLab and add to list
     private CrimeLab(Context context){
         mCrimes = new ArrayList<>();
         for(int i = 0; i < 100; i++){
@@ -36,6 +38,7 @@ public class CrimeLab {
         return mCrimes;
     }
 
+    //Retrieve a crime by its UUID
     public Crime getCrime(UUID id){
         for(Crime crime : mCrimes){
             if(crime.getId().equals(id)){

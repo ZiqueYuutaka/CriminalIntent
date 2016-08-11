@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import java.util.List;
 /**
  * Created by Zique Yuutaka on 8/7/2016.
  * Responsible for displaying a list of crimes
+ * Hosted by CrimeListActivity
  */
 public class CrimeListFragment extends Fragment {
     //Nothing yet
@@ -32,6 +34,7 @@ public class CrimeListFragment extends Fragment {
         private CheckBox mSolvedCheckBox;
         private Crime mCrime;
 
+        //Create the ViewHolder
         public CrimeHolder(View itemView){
             super(itemView);
             itemView.setOnClickListener(this);
@@ -49,9 +52,14 @@ public class CrimeListFragment extends Fragment {
             mSolvedCheckBox.setChecked(mCrime.isSolved());
         }
 
+        //Overriden from View.OnClickListener
         @Override
         public void onClick(View v){
-            Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+            //Starting new Activity
+            //Intent intent = new Intent(getActivity(), CrimeActivity.class); //Implemented in Crime Activity
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            startActivity(intent);
         }
     }
 
@@ -95,6 +103,13 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
+    //Overriding onResume() to reload list with updated information
+    @Override
+    public void onResume(){
+        super.onResume();
+        updateUI();
+    }
+
     //Method connects the RecyclerView with an Adapter
     private void updateUI(){
         //Create a database of crimes based on activity
@@ -102,7 +117,11 @@ public class CrimeListFragment extends Fragment {
         List<Crime> crimes = crimeLab.getCrimes();
 
         //Create an adapter and give it the list of crimes
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+        if(mAdapter == null){
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        }else{
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }
