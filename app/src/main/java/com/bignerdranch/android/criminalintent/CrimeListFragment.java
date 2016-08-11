@@ -22,7 +22,8 @@ import java.util.List;
  * Hosted by CrimeListActivity
  */
 public class CrimeListFragment extends Fragment {
-    //Nothing yet
+    //Changed by Zique Yuutaka for search time constant O(1) in CrimePagerActivity
+    public static final String CRIME_POSITION = "com.bignerdranch.android.criminalintent.crime_position";
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
     private int crimeListPosition;
@@ -60,10 +61,13 @@ public class CrimeListFragment extends Fragment {
             //Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
             //Starting new Activity
             //Intent intent = new Intent(getActivity(), CrimeActivity.class); //Implemented in Crime Activity
-            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            //Decommissioned and replaced by CrimePagerActivity
+            //Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
             crimeListPosition = mCrimes.indexOf(mCrime);
             //Changed by Zique Yuutaka for debugging
             //Toast.makeText(getActivity(), "Clicking item at position " + crimeListPosition, Toast.LENGTH_SHORT).show();
+            intent.putExtra(CRIME_POSITION, crimeListPosition);
             startActivity(intent);
         }
     }
