@@ -56,6 +56,13 @@ public class CrimeFragment extends Fragment {
         //Get the crime from Fragment arguments passed through a Bundle
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId); //Retrieve crime by its UUID
+    }//End onCreate
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
     }
 
     @Override

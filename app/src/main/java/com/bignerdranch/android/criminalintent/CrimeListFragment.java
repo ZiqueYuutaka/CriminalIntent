@@ -105,6 +105,11 @@ public class CrimeListFragment extends Fragment {
         public int getItemCount(){
             return mCrimes.size();
         }
+
+        //used to refresh the list of crimes
+        public void setCrimes(List<Crime> crimes){
+            mCrimes = crimes;
+        }
     }//End CrimeAdapter
 
     //Overriding onCreate to notify FragmentManager of Menu callback
@@ -212,6 +217,7 @@ public class CrimeListFragment extends Fragment {
             //Changed by Zique Yuutaka for efficiency.  Rather than looking at the entire
             //list, look at just the Crime being changed.
             //mAdapter.notifyDataSetChanged();
+            mAdapter.setCrimes(crimes);
             mAdapter.notifyItemChanged(crimeListPosition);
         }
 
