@@ -1,5 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,8 +34,31 @@ public class CrimeListFragment extends Fragment {
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
     private boolean mSubtitleVisible;
+    private Callbacks mCallbacks;
     private int crimeListPosition;
     private List<Crime> mCrimes;
+
+    /**
+     * Required interface for hosting activities
+     */
+    public interface Callbacks{
+        void onCrimeSelected(Crime crime, int position);
+    }
+
+    //changed by Zique Yuutaka
+    //Deprecated method onAttach(Activity) in book replaced with
+    //onAttach(Context)
+    @Override
+    public void onAttach(Context activity){
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     private class CrimeHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener {
@@ -69,12 +94,13 @@ public class CrimeListFragment extends Fragment {
             //Intent intent = new Intent(getActivity(), CrimeActivity.class); //Implemented in Crime Activity
             //Decommissioned and replaced by CrimePagerActivity
             //Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
-            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
+            /*Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
             crimeListPosition = mCrimes.indexOf(mCrime);
             //Changed by Zique Yuutaka for debugging
             //Toast.makeText(getActivity(), "Clicking item at position " + crimeListPosition, Toast.LENGTH_SHORT).show();
             intent.putExtra(CRIME_POSITION, crimeListPosition);
-            startActivity(intent);
+            startActivity(intent);*/
+            mCallbacks.onCrimeSelected(mCrime, mCrimes.indexOf(mCrime));
         }
     }
 
@@ -172,13 +198,14 @@ public class CrimeListFragment extends Fragment {
             case R.id.menu_item_new_crime:
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
+                //Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
 
                 //Changed by Zique Yuutaka to get position of new crime and pass as extra
-                crimeListPosition = mCrimes.indexOf(crime);
+                /*crimeListPosition = mCrimes.indexOf(crime);
                 intent.putExtra(CRIME_POSITION, crimeListPosition);
-
-                startActivity(intent);
+                startActivity(intent);*/
+                updateUI();
+                mCallbacks.onCrimeSelected(crime, mCrimes.indexOf(crime));
                 return true;
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
@@ -204,7 +231,7 @@ public class CrimeListFragment extends Fragment {
     }
 
     //Method connects the RecyclerView with an Adapter
-    private void updateUI(){
+    public void updateUI(){
         //Create a database of crimes based on activity
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
